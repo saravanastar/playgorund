@@ -7,7 +7,7 @@ public class TicTac {
     public static void main(String[] args) {
         char[][] validTictocHorizontal = new char[][]{
                 {'R', 'R', 'R', 'R'},
-                {' ', ' ', 'Y', 'Y'},
+                {'R', 'R', 'Y', 'Y'},
                 {' ', ' ', ' ', ' '},
                 {' ', ' ', ' ', ' '}};
         char[][] invalidTictocHorizontal = new char[][]{
@@ -68,7 +68,7 @@ public class TicTac {
         if (totalLengthToCheck - 1 == 0) {
             return true;
         }
-        return isValidHorizontal(input, row, column + 1, totalLengthToCheck - 1, characterToCheck);
+        return isValidHorizontalForward(input, row, column + 1, totalLengthToCheck - 1, characterToCheck);
     }
 
     private boolean isValidHorizontalBackward(char[][] input, int row, int column, int totalLengthToCheck, char characterToCheck) {
@@ -77,7 +77,7 @@ public class TicTac {
         if (totalLengthToCheck - 1 == 0) {
             return true;
         }
-        return isValidHorizontal(input, row, column - 1, totalLengthToCheck - 1, characterToCheck);
+        return isValidHorizontalBackward(input, row, column - 1, totalLengthToCheck - 1, characterToCheck);
     }
 
     private boolean isValidVertical(char[][] input, int row, int column, int totalLengthToCheck, char characterToCheck) {

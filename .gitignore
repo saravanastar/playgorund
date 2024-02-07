@@ -1,0 +1,8 @@
+target/
+
+# JetBrain's recommended rules don't work.
+.idea/
+*.iml
+*.ipr
+
+workout.iml
