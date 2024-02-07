@@ -32,6 +32,12 @@ public class TicTac {
                 {' ', 'R', 'Y', 'R'},
                 {' ', ' ', 'R', 'R'},
                 {' ', ' ', ' ', 'R'}};
+
+        char[][] validTictocDiagonal2 = new char[][]{
+                {' ', ' ', ' ', 'R'},
+                {' ', 'R', 'R', 'R'},
+                {' ', 'R', 'R', 'R'},
+                {'R', ' ', ' ', 'R'}};
         char[][] inValidTictocDiagonal = new char[][]{
                 {'R', ' ', ' ', ' '},
                 {' ', ' ', 'Y', 'R'},
@@ -39,11 +45,12 @@ public class TicTac {
                 {' ', ' ', ' ', 'R'}};
 
         TicTac ticTac = new TicTac();
-        System.out.println("Valid Horizontal: ===> " + ticTac.isValid(validTictocHorizontal, 0, 3, 'R'));
+        System.out.println("Valid Horizontal: ===> " + ticTac.isValid(validTictocHorizontal, 0, 2, 'R'));
         System.out.println("InValid Horizontal: ===> " + !ticTac.isValid(invalidTictocHorizontal, 0, 2, 'R'));
         System.out.println("valid vertical: ===> " + ticTac.isValid(validTictocVertical, 3, 3, 'R'));
         System.out.println("invalid vertical: ===> " + !ticTac.isValid(invalidTictocVertical, 3, 3, 'R'));
-        System.out.println("valid diagonal: ===> " + ticTac.isValid(validTictocDiagonal, 3, 3, 'R'));
+        System.out.println("valid diagonal: ===> " + ticTac.isValid(validTictocDiagonal, 1, 1, 'R'));
+        System.out.println("valid diagonal: ===> " + ticTac.isValid(validTictocDiagonal2, 3, 0, 'R'));
         System.out.println("invalid diagonal: ===> " + !ticTac.isValid(inValidTictocDiagonal, 3, 3, 'R'));
     }
 
@@ -109,7 +116,8 @@ public class TicTac {
     private boolean isValidDiagonal(char[][] input, int row, int column, char characterToCheck) {
         //if out of bound or character not matches return false immediately
         if (isOutOfBound(input, row, column) || input[row][column] != characterToCheck) return false;
-        return (1 + matchFoundTopLeft(input, row-1, column-1, 0, characterToCheck) + matchFoundBottomRight(input, row+1, column+1, 0, characterToCheck)) >= TOTAL_LENGTH_TO_CHECK;
+        return ((1 + matchFoundTopLeft(input, row-1, column-1, 0, characterToCheck) + matchFoundBottomRight(input, row+1, column+1, 0, characterToCheck)) >= TOTAL_LENGTH_TO_CHECK ||
+                (1 + matchFoundTopRight(input, row-1, column+1, 0, characterToCheck) + matchFoundBottomLeft(input, row+1, column - 1, 0, characterToCheck)) >= TOTAL_LENGTH_TO_CHECK);
     }
 
     private int matchFoundBottomRight(char[][] input, int row, int column, int currentMatchedCharacterLength, char characterToCheck) {
@@ -128,5 +136,25 @@ public class TicTac {
         if (input[row][column] != characterToCheck) return currentMatchedCharacterLength;
         currentMatchedCharacterLength = currentMatchedCharacterLength + 1;
         return matchFoundTopLeft(input, row - 1, column - 1, currentMatchedCharacterLength, characterToCheck);
+    }
+
+
+    private int matchFoundTopRight(char[][] input, int row, int column, int currentMatchedCharacterLength, char characterToCheck) {
+        //if out of bound or character not matches return the matched count
+        //otherwise continue forward recursive function
+        if (isOutOfBound(input, row, column)) return currentMatchedCharacterLength;
+        if (input[row][column] != characterToCheck) return currentMatchedCharacterLength;
+        currentMatchedCharacterLength = currentMatchedCharacterLength + 1;
+        return matchFoundTopRight(input, row - 1, column + 1, currentMatchedCharacterLength, characterToCheck);
+    }
+
+
+    private int matchFoundBottomLeft(char[][] input, int row, int column, int currentMatchedCharacterLength, char characterToCheck) {
+        //if out of bound or character not matches return the matched count
+        //otherwise continue forward recursive function
+        if (isOutOfBound(input, row, column)) return currentMatchedCharacterLength;
+        if (input[row][column] != characterToCheck) return currentMatchedCharacterLength;
+        currentMatchedCharacterLength = currentMatchedCharacterLength + 1;
+        return matchFoundBottomLeft(input, row + 1, column - 1, currentMatchedCharacterLength, characterToCheck);
     }
 }
