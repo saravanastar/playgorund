@@ -39,8 +39,8 @@ public class TicTac {
                 {' ', ' ', ' ', 'R'}};
 
         TicTac ticTac = new TicTac();
-        System.out.println("Valid Horizontal: ===> " + ticTac.isValid(validTictocHorizontal, 0, 0, 'R'));
-        System.out.println("InValid Horizontal: ===> " + !ticTac.isValid(invalidTictocHorizontal, 0, 0, 'R'));
+        System.out.println("Valid Horizontal: ===> " + ticTac.isValid(validTictocHorizontal, 0, 3, 'R'));
+        System.out.println("InValid Horizontal: ===> " + !ticTac.isValid(invalidTictocHorizontal, 0, 2, 'R'));
         System.out.println("valid vertical: ===> " + ticTac.isValid(validTictocVertical, 3, 3, 'R'));
         System.out.println("invalid vertical: ===> " + !ticTac.isValid(invalidTictocVertical, 3, 3, 'R'));
         System.out.println("valid diagonal: ===> " + ticTac.isValid(validTictocDiagonal, 3, 3, 'R'));
@@ -52,80 +52,82 @@ public class TicTac {
     }
 
     public boolean isValid(char[][] input, int lastPointRow, int lastPointColumn, char characterToCheck) {
-        return isValidDiagonal(input, lastPointRow, lastPointColumn, TOTAL_LENGTH_TO_CHECK, characterToCheck) ||
-                isValidHorizontal(input, lastPointRow, lastPointColumn, TOTAL_LENGTH_TO_CHECK, characterToCheck) ||
-                isValidVertical(input, lastPointRow, lastPointColumn, TOTAL_LENGTH_TO_CHECK, characterToCheck);
+        return isValidDiagonal(input, lastPointRow, lastPointColumn, characterToCheck) ||
+                isValidHorizontal(input, lastPointRow, lastPointColumn, characterToCheck) ||
+                isValidVertical(input, lastPointRow, lastPointColumn, characterToCheck);
     }
 
-    private boolean isValidHorizontal(char[][] input, int row, int column, int totalLengthToCheck, char characterToCheck) {
-
-        return isValidHorizontalBackward(input, row, column, totalLengthToCheck, characterToCheck) || isValidHorizontalForward(input, row, column, totalLengthToCheck, characterToCheck);
+    private boolean isValidHorizontal(char[][] input, int row, int column, char characterToCheck) {
+        //if out of bound or character not matches return false immediately
+        if (isOutOfBound(input, row, column) || input[row][column] != characterToCheck) return false;
+        // if total matches greater than equal 4 return true.
+        return (1 + matchFoundHorizontalBackward(input, row, column-1, 0, characterToCheck) + matchFoundHorizontalForward(input, row, column+1, 0, characterToCheck)) >= TOTAL_LENGTH_TO_CHECK;
     }
 
-    private boolean isValidHorizontalForward(char[][] input, int row, int column, int totalLengthToCheck, char characterToCheck) {
-        if (isOutOfBound(input, row, column)) return false;
-        if (input[row][column] != characterToCheck) return false;
-        if (totalLengthToCheck - 1 == 0) {
-            return true;
-        }
-        return isValidHorizontalForward(input, row, column + 1, totalLengthToCheck - 1, characterToCheck);
+    private int matchFoundHorizontalForward(char[][] input, int row, int column, int currentMatchedCharacterLength, char characterToCheck) {
+        //if out of bound or character not matches return the matched count
+        //otherwise continue forward recursive function
+        if (isOutOfBound(input, row, column)) return currentMatchedCharacterLength;
+        if (input[row][column] != characterToCheck) return currentMatchedCharacterLength;
+        currentMatchedCharacterLength = currentMatchedCharacterLength + 1;
+        return matchFoundHorizontalForward(input, row, column + 1, currentMatchedCharacterLength, characterToCheck);
     }
 
-    private boolean isValidHorizontalBackward(char[][] input, int row, int column, int totalLengthToCheck, char characterToCheck) {
-        if (isOutOfBound(input, row, column)) return false;
-        if (input[row][column] != characterToCheck) return false;
-        if (totalLengthToCheck - 1 == 0) {
-            return true;
-        }
-        return isValidHorizontalBackward(input, row, column - 1, totalLengthToCheck - 1, characterToCheck);
+    private int matchFoundHorizontalBackward(char[][] input, int row, int column, int currentMatchedCharacterLength, char characterToCheck) {
+        //if out of bound or character not matches return the matched count
+        //otherwise continue forward recursive function
+        if (isOutOfBound(input, row, column)) return currentMatchedCharacterLength;
+        if (input[row][column] != characterToCheck) return currentMatchedCharacterLength;
+        currentMatchedCharacterLength = currentMatchedCharacterLength + 1;
+        return matchFoundHorizontalBackward(input, row, column - 1, currentMatchedCharacterLength, characterToCheck);
     }
 
-    private boolean isValidVertical(char[][] input, int row, int column, int totalLengthToCheck, char characterToCheck) {
-
-
-        return isVerticalDownMatch(input, row, column, totalLengthToCheck, characterToCheck) || isVerticalUpMatch(input, row, column, totalLengthToCheck, characterToCheck);
+    private boolean isValidVertical(char[][] input, int row, int column, char characterToCheck) {
+        //if out of bound or character not matches return false immediately
+        if (isOutOfBound(input, row, column) || input[row][column] != characterToCheck) return false;
+        return (1 + matchVerticalDown(input, row+1, column, 0, characterToCheck) + matchVerticalUp(input, row-1, column, 0, characterToCheck)) >= TOTAL_LENGTH_TO_CHECK;
     }
 
-    private boolean isVerticalUpMatch(char[][] input, int row, int column, int totalLengthToCheck, char characterToCheck) {
-        if (isOutOfBound(input, row, column)) return false;
-        if (input[row][column] != characterToCheck) return false;
-        if (totalLengthToCheck - 1 == 0) {
-            return true;
-        }
-        return isVerticalUpMatch(input, row - 1, column, totalLengthToCheck - 1, characterToCheck);
+    private int matchVerticalUp(char[][] input, int row, int column, int currentMatchedCharacterLength, char characterToCheck) {
+        //if out of bound or character not matches return the matched count
+        //otherwise continue forward recursive function
+        if (isOutOfBound(input, row, column)) return currentMatchedCharacterLength;
+        if (input[row][column] != characterToCheck) return currentMatchedCharacterLength;
+        currentMatchedCharacterLength = currentMatchedCharacterLength + 1;
+        return matchVerticalUp(input, row-1, column, currentMatchedCharacterLength, characterToCheck);
     }
 
-    private boolean isVerticalDownMatch(char[][] input, int row, int column, int totalLengthToCheck, char characterToCheck) {
-        if (isOutOfBound(input, row, column)) return false;
-        if (input[row][column] != characterToCheck) return false;
-        if (totalLengthToCheck - 1 == 0) {
-            return true;
-        }
-        return isVerticalDownMatch(input, row + 1, column, totalLengthToCheck - 1, characterToCheck);
+    private int matchVerticalDown(char[][] input, int row, int column, int currentMatchedCharacterLength, char characterToCheck) {
+        //if out of bound or character not matches return the matched count
+        //otherwise continue forward recursive function
+        if (isOutOfBound(input, row, column)) return currentMatchedCharacterLength;
+        if (input[row][column] != characterToCheck) return currentMatchedCharacterLength;
+        currentMatchedCharacterLength = currentMatchedCharacterLength + 1;
+        return matchVerticalDown(input, row + 1, column, currentMatchedCharacterLength, characterToCheck);
     }
 
-    private boolean isValidDiagonal(char[][] input, int row, int column, int totalLengthToCheck, char characterToCheck) {
-
-
-        return isValidDiagonalFromTopLeft(input, row, column, totalLengthToCheck, characterToCheck) || isValidDiagonalFromBottomRight(input, row, column, totalLengthToCheck, characterToCheck);
+    private boolean isValidDiagonal(char[][] input, int row, int column, char characterToCheck) {
+        //if out of bound or character not matches return false immediately
+        if (isOutOfBound(input, row, column) || input[row][column] != characterToCheck) return false;
+        return (1 + matchFoundTopLeft(input, row-1, column-1, 0, characterToCheck) + matchFoundBottomRight(input, row+1, column+1, 0, characterToCheck)) >= TOTAL_LENGTH_TO_CHECK;
     }
 
-    private boolean isValidDiagonalFromBottomRight(char[][] input, int row, int column, int totalLengthToCheck, char characterToCheck) {
-        if (isOutOfBound(input, row, column)) return false;
-        if (input[row][column] != characterToCheck) return false;
-        if (totalLengthToCheck - 1 == 0) {
-            return true;
-        }
-        return isValidDiagonalFromBottomRight(input, row + 1, column + 1, totalLengthToCheck - 1, characterToCheck);
+    private int matchFoundBottomRight(char[][] input, int row, int column, int currentMatchedCharacterLength, char characterToCheck) {
+        //if out of bound or character not matches return the matched count
+        //otherwise continue forward recursive function
+        if (isOutOfBound(input, row, column)) return currentMatchedCharacterLength;
+        if (input[row][column] != characterToCheck) return currentMatchedCharacterLength;
+        currentMatchedCharacterLength = currentMatchedCharacterLength + 1;
+        return matchFoundBottomRight(input, row + 1, column + 1, currentMatchedCharacterLength, characterToCheck);
     }
 
-    private boolean isValidDiagonalFromTopLeft(char[][] input, int row, int column, int totalLengthToCheck, char characterToCheck) {
-        if (isOutOfBound(input, row, column)) return false;
-        if (input[row][column] != characterToCheck) return false;
-        if (totalLengthToCheck - 1 == 0) {
-            return true;
-        }
-        return isValidDiagonalFromTopLeft(input, row - 1, column - 1, totalLengthToCheck - 1, characterToCheck);
+    private int matchFoundTopLeft(char[][] input, int row, int column, int currentMatchedCharacterLength, char characterToCheck) {
+        //if out of bound or character not matches return the matched count
+        //otherwise continue forward recursive function
+        if (isOutOfBound(input, row, column)) return currentMatchedCharacterLength;
+        if (input[row][column] != characterToCheck) return currentMatchedCharacterLength;
+        currentMatchedCharacterLength = currentMatchedCharacterLength + 1;
+        return matchFoundTopLeft(input, row - 1, column - 1, currentMatchedCharacterLength, characterToCheck);
     }
 
 
