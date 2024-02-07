@@ -129,6 +129,4 @@ public class TicTac {
         currentMatchedCharacterLength = currentMatchedCharacterLength + 1;
         return matchFoundTopLeft(input, row - 1, column - 1, currentMatchedCharacterLength, characterToCheck);
     }
-
-
 }
