@@ -5,7 +5,7 @@ import java.util.stream.IntStream;
 
 public class MinHeap {
     int[] heapStore;
-    int currentIndex = 0;
+    int currentIndex = -1;
     public MinHeap(int size) {
         heapStore = new int[size];
     }
@@ -24,45 +24,81 @@ public class MinHeap {
         minHeap.insert(100);
         minHeap.insert(1);
         minHeap.print();
+        System.out.println();
+        minHeap.remove();
+        minHeap.print();
+        System.out.println();
+        minHeap.remove();
+        minHeap.print();
+        System.out.println();
+        minHeap.remove();
+        minHeap.print();
 
     }
 
     private void print() {
-        IntStream.range(0, currentIndex).forEach(index -> {
+        IntStream.range(0, currentIndex+1).forEach(index -> {
             System.out.println(heapStore[index]);
         });
     }
 
     private int getParent(int index) {
-        return index / 2;
+        return (index-1) / 2;
     }
 
     private int getLeft(int index) {
-        return 2 * index;
+        return 2 * index + 1;
     }
 
     private int getRight(int index) {
-        return 2 * index + 1;
+        return 2 * index + 2;
     }
 
     private boolean insert(int input) {
         if (currentIndex+1 > heapStore.length) {
             return false;
         }
-        if (currentIndex == 0) {
-            heapStore[currentIndex] = input;
-            currentIndex++;
-        } else {
-
-        }
+        heapStore[++currentIndex] = input;
+        heapify(currentIndex);
         return true;
+    }
+
+    private boolean remove() {
+        if (currentIndex == 0) {
+            return false;
+        }
+        heapStore[0] = heapStore[currentIndex];
+        heapStore[currentIndex] = 0;
+        currentIndex = currentIndex - 1;
+        heapifyRemove(0);
+        return true;
+    }
+
+    private void heapifyRemove(int index) {
+        if (index < currentIndex) {
+            int smallestIndex = index;
+            int leftIndex = getLeft(smallestIndex);
+            int rightIndex = getRight(smallestIndex);
+            if (leftIndex<= currentIndex && heapStore[leftIndex] < heapStore[smallestIndex]) {
+                smallestIndex = leftIndex;
+            }
+            if (rightIndex<= currentIndex && heapStore[rightIndex] < heapStore[smallestIndex]) {
+                smallestIndex = rightIndex;
+            }
+            if (smallestIndex != index) {
+                int temp = heapStore[smallestIndex];
+                heapStore[smallestIndex] = heapStore[index];
+                heapStore[index] = temp;
+                heapifyRemove(smallestIndex);
+            }
+        }
     }
 
     private void heapify(int index) {
         int currentIndex = index;
         while (currentIndex > 0) {
             int parentIndex = getParent(currentIndex);
-            if (heapStore[currentIndex] < heapStore[parentIndex]) {
+            if (parentIndex >= 0 && heapStore[currentIndex] < heapStore[parentIndex]) {
                 swap(currentIndex, parentIndex);
                 currentIndex = parentIndex;
                 continue;
