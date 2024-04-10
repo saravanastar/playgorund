@@ -1,6 +1,7 @@
 package com.ask.workout.algo.util;
 
 
+import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.LinkedList;
 
@@ -22,14 +23,22 @@ public class TreeUtil {
             container.add(node);
         }
         while (!container.isEmpty()) {
-            TreeNode current = container.poll();
-            System.out.print(current.val + "\t");
-            if (current.left != null) {
-                container.push(current.left);
+            int maxSize = container.size();
+            int currentSize = 0;
+            while (currentSize < maxSize) {
+                TreeNode current = container.pollLast();
+                System.out.print(current.val + "\t");
+
+                if (current.left != null) {
+                    container.push(current.left);
+                }
+                if (current.right != null) {
+                    container.push(current.right);
+                }
+                currentSize++;
             }
-            if (current.right != null) {
-                container.push(current.right);
-            }
+            System.out.println();
+
         }
     }
 
